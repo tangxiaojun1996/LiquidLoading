@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>水波loading</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+		<style>
+			body>:not(._nb_blog_block_ad) {
+				display: none !important;
+				height: inherit;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="_nb_blog_block_ad">
+
+			<div class="loading-mask">
+				<svg width="300" height="300" viewBox='0 0 300 300' xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<defs>
+						<mask id="mask">
+							<circle cx='150' cy='150' r='145' fill='white'></circle>
+						</mask>
+					</defs>
+
+					<g fill="#2f9cff" mask='url(#mask)'>
+						<path id='wave_loading'></path>
+						<path id='wave_loading_shadow'></path>
+					</g>
+					<text id='process' x='125' y='160' style='font-size:30px'></text>
+					<circle cx='150' cy='150' stroke-width='5' r='145' stroke='#2f9cff' fill='none'></circle>
+				</svg>
+			</div>
+		</div>
+	</body>
+	<script src='http://qiutianaimeili.com/js/jquery-3.1.1.min.js'></script>
+	<script>
+			var create_wave = function(width, height, waveLength, swing, percent, offset, distance, opacity) {
+				offset = offset % waveLength;
+				percent = percent.toFixed(2);
+				var circle = ((width / waveLength) >> 0) + 2; //获取总共要画多少个周期
+				var d = "M " + ((-offset) >> 0) + " " + (((1 - percent) * height) >> 0),
+					d1 = "M " + ((-offset + distance) >> 0) + " " + (((1 - percent) * height) >> 0);
+
+				//每个周期用两个Q
+				for(var i = 0; i < circle; i++) {
+					d += "Q " + ((i * waveLength + waveLength / 4 - offset) >> 0) + " " + (((1 - percent) * height - swing) >> 0) + " ," + ((i * waveLength + (waveLength / 2) - offset) >> 0) + " " + (((1 - percent) * height) >> 0);
+					d += "Q " + ((i * waveLength + (waveLength * 3 / 4) - offset) >> 0) + " " + (((1 - percent) * height + swing) >> 0) + "," + ((i * waveLength + waveLength - offset) >> 0) + " " + (((1 - percent) * height) >> 0);
+
+					d1 += "Q " + ((i * waveLength + waveLength / 4 - offset + distance) >> 0) + " " + (((1 - percent) * height - swing) >> 0) + " ," + ((i * waveLength + (waveLength / 2) - offset + distance) >> 0) + " " + (((1 - percent) * height) >> 0);
+					d1 += "Q " + ((i * waveLength + (waveLength * 3 / 4) - offset + distance) >> 0) + " " + (((1 - percent) * height + swing) >> 0) + "," + ((i * waveLength + waveLength - offset + distance) >> 0) + " " + (((1 - percent) * height) >> 0);
+				}
+				d += 'V ' + height + ' H ' + ((-offset) >> 0) + ' V ' + (((1 - percent) * height) >> 0) + ' z';
+				d1 += 'V ' + height + ' H ' + ((-offset + distance) >> 0) + ' V ' + (((1 - percent) * height) >> 0) + ' z';
+				$('#wave_loading').attr('d', d);
+				$('#wave_loading_shadow').attr('d', d1).css('opacity', opacity);
+			}
+			var i = 0,
+				j = 0,
+				last = -1,
+				start = 0,
+				_swing = 0,
+				go = true,
+				percenge = 50;
+			var run = function() {
+				if(!go){//停止了，不再绘画
+					requestAnimationFrame(run);
+					return;
+				}
+				if(i != last) {
+					$('#process').text(i + '%');
+					_swing = 30;
+					start = 0;
+					last = i;
+				} else {
+				}
+
+				if(i < percenge) {
+					create_wave(300, 300, 500, _swing, (i++) / 100, (j++) * 10, 220, .6);
+				} else if(i == percenge) {
+					create_wave(300, 300, 500, _swing, percenge / 100, (j++) * 10, 220, .6);
+				} else if(i > percenge) {
+					create_wave(300, 300, 500, _swing, (i--) / 100, (j++) * 10, 220, .6);
+				}
+				requestAnimationFrame(run);
+			};
+			run();
+	</script>
+
+</html>
